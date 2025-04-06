@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Szybki Szofer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
+</head>
+<style>
+#opzn{
+            width: 600px;
+            height: 600px;
+        }
+        #sredniaPred{
+            width: 1000px;
+            height: 1000px;
+        }
+        #ilosc{
+            width: 1000px;
+            height: 1000px;
+        }
+        #map {
+            height: 1000px;
+            margin-top: 1rem; 
+        }
+        
+        section {
+            margin-top: 2rem; 
+            border-top: 2px solid #ccc; 
+            padding-top: 2rem; 
+        }
+</style>
+
+<body>
+<div>
+    <div id="Predkosci">
+        <h2>Najszybsze pojazdy </h2>
+    <canvas id="myChart"></canvas>
+</div>
+<div id="opzn">
+    <h2>Najwieksze opoznienia pojazdow</h2>
+    
+<canvas id="opoznienia"></canvas>
+</div>
+<div id="sredniaPred">
+    <h2>Najszybsze linie</h2>
+<canvas id="srednie"></canvas>
+</div>
+<div id="ilosc">
+    <h2>Ilosz pojazdow</h2>
+<canvas id="ilosccan"></canvas>
+</div>
+<div id="opoznieniasr">
+    <h2>Najbardziej opoznione linie</h2>
+<canvas id="srdopz"></canvas>
+</div>
+<div>
+    <h2>Wykroczenia</h2>
+    <table id="example" class="display">
+        <thead>
+            <tr>
+                <th>Prędkość</th>
+                <th>Pojazd</th>
+                <th>Radar</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<section>
+    <h2>Mapa lokalizacji pojazdów</h2>
+    <div id="map"></div>
+</section>
+
+  </div>
+</body>
+
+  
+  <script>
+    $(document).ready(function () {
+    var MaxspeedCanv;
+    var opozn;
+    var srednie;
+    var liczba;
+    var opznLini;
+    $.ajax({
+        url: "https://www.zditm.szczecin.pl/api/v1/vehicles",
+        method: "GET",
+        dataType: "json",
+         success: function(response) {
+            response.data.forEach(element => {
+            console.log(element)
+                Predkosci(response.data);
+                Opoznienia(response.data);
+                Srednie(response.data);
+                ilosc(response.data);
+                opzn(response.data);
+                radar(response.data);
+                createMap(response.data);
+
+            }); 
+            
+            
+
+     
+}
+
+})
+
+function Predkosci(data){
+    if(MaxspeedCanv!=null){
+            MaxspeedCanv.destroy();
+        }
+    let sortedData = data.sort((a, b) => b.velocity - a.velocity);
+
+let naj = sortedData.slice(0, 5);
+console.log(naj); 
+        
+const ctx = document.getElementById('myChart');
+
+MaxspeedCanv = new Chart(ctx, {
+type: 'bar',
+data: {
+labels: ["linia: " + naj[0].vehicle_number,"linia: " +naj[1].vehicle_number,"linia: " + naj[2].vehicle_number,"linia: " + naj[3].vehicle_number,"linia: " + naj[4].vehicle_number],
+datasets: [{
+label: 'Prędkość',
+data: [naj[0].velocity, naj[1].velocity, naj[2].velocity, naj[3].velocity, naj[4].velocity],
+borderWidth: 1
+}]
+},
+options: {
+scales: {
+y: {
+  beginAtZero: true
+}
+}
+}
+});
+
+}
+
+function Opoznienia(data){
+
+const ctx = document.getElementById('opoznienia');
+if (opozn != null) {
+            opozn.destroy();
+        }
+let sortedData = data.sort((a, b) =>  a.punctuality - b.punctuality );
+
+let naj = sortedData.slice(0, 5);
+opozn = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: naj.map(item => "linia: " + item.vehicle_number),
+                datasets: [{
+                    label: 'Opóźnienia',
+                    data: naj.map(item => item.punctuality),
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+}
+
+function Srednie(data){
+    if (srednie != null) {
+            srednie.destroy();
+        }
+
+        let lineSpeeds = {};
+        data.forEach(vehicle => {
+            if (!lineSpeeds[vehicle.line_number]) {
+                lineSpeeds[vehicle.line_number] = [];
+            }
+            lineSpeeds[vehicle.line_number].push(vehicle.velocity);
+        });
+
+        let lineAverageSpeeds = [];
+        for (let line in lineSpeeds) {
+            let avgSpeed = lineSpeeds[line].reduce((a, b) => a + b, 0) / lineSpeeds[line].length;
+            lineAverageSpeeds.push({ line: line, avgSpeed: avgSpeed });
+        }
+
+        lineAverageSpeeds.sort((a, b) => b.avgSpeed - a.avgSpeed);
+        const top5Lines = lineAverageSpeeds.slice(0, 5);
+        const labels = top5Lines.map(item => item.line);
+        const values = top5Lines.map(item => item.avgSpeed);
+
+const ctx = document.getElementById('srednie');
+srednie = new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Średnia prędkość (km/h)',
+            data: values,
+            backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(75, 192, 192)',
+      'rgb(255, 205, 86)',
+      'rgb(201, 203, 207)',
+      'rgb(54, 162, 235)'
+    ]
+           
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+}
+
+function ilosc(data){
+    if (liczba != null) {
+            liczba.destroy();
+        }
+    var tramwaje =0;
+    var busy =0;
+    var dzienne =0;
+    var nocne =0;
+data.forEach((element) =>{
+    if(element.vehicle_type=="tram"){
+        tramwaje++;
+    }
+    if(element.vehicle_type=="bus"){
+        busy++;
+    }
+    if(element.line_type=="day"){
+        dzienne++
+    }
+    if(element.line_type=="night"){
+        nocne++
+    }
+
+});
+
+const ctx = document.getElementById('ilosccan');
+liczba = new Chart(ctx, {
+    type: 'radar',
+  data:  {
+  labels: [
+    'trawmaje',
+    'busy',
+    'dzienne',
+    'nocne'
+  ],
+  datasets: [{
+    label: 'ilosc',
+    data: [tramwaje, busy, dzienne, nocne ],
+    fill: true,
+    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+    borderColor: 'rgb(255, 99, 132)',
+    pointBackgroundColor: 'rgb(255, 99, 132)',
+    pointBorderColor: '#fff',
+    pointHoverBackgroundColor: '#fff',
+    pointHoverBorderColor: 'rgb(255, 99, 132)'
+  }]
+},
+  options: {
+    elements: {
+      line: {
+        borderWidth: 3
+      }
+    }
+  }
+  
+        });
+}
+
+function opzn(data){
+    if (opznLini != null) {
+        opznLini.destroy();
+        }
+
+
+
+        let linePunctuality = {};
+        data.forEach(vehicle => {
+            if (!linePunctuality[vehicle.line_number]) {
+                linePunctuality[vehicle.line_number] = [];
+            }
+            linePunctuality[vehicle.line_number].push(vehicle.punctuality);
+        });
+
+        let lineAveragePunctuality = [];
+        for (let line in linePunctuality) {
+            let avgPunctuality = linePunctuality[line].reduce((a, b) => a + b, 0) / linePunctuality[line].length;
+            lineAveragePunctuality.push({ line: line, avgPunctuality: avgPunctuality });
+        }
+
+        lineAveragePunctuality.sort((a, b) => b.avgPunctuality - a.avgPunctuality);
+        const top5Lines = lineAveragePunctuality.slice(0, 5);
+        const labels = top5Lines.map(item => item.line);
+        const values = top5Lines.map(item => item.avgPunctuality);
+
+
+const ctx = document.getElementById('srdopz');
+
+opznLini = new Chart(ctx, {
+    type: 'line',
+  data:  {
+  labels: labels,
+  datasets: [{
+    label: 'ilosc',
+    data: values,
+    fill: true,
+    borderColor: 'rgb(75, 192, 192)',
+    tension: 0.1
+  }]
+},
+  options: {
+    elements: {
+      line: {
+        borderWidth: 3
+      }
+    }
+  }
+  
+        });
+    }
+
+    function radar(data){
+        var przekroczenia = [];
+
+data.forEach(element => {
+    let odleglosc = getDistanceFromLatLonInKm(53.43460331279472, 14.492350459618946, element.latitude, element.longitude);
+    if (odleglosc < 0.5 && element.velocity > 30) {
+        przekroczenia.push({
+            predkosc: element.velocity,
+            pojazd: element.line_number,
+            radar: "Taczaka"
+        });
+    }
+});
+
+data.forEach(element => {
+    let odleglosc = getDistanceFromLatLonInKm(53.42042623964588, 14.549244479754746, element.latitude, element.longitude);
+    if (odleglosc < 0.5 && element.velocity > 30) {
+        przekroczenia.push({
+            predkosc: element.velocity,
+            pojazd: element.line_number,
+            radar: "3 Maja"
+        });
+    }
+});
+
+if ($.fn.DataTable.isDataTable('#example')) {
+            table.clear().rows.add(przekroczenia).draw();
+        } else {
+            table = $('#example').DataTable({
+                data: przekroczenia,
+                columns: [
+                    { data: 'predkosc' },
+                    { data: 'pojazd' },
+                    { data: 'radar' }
+                ]
+            });
+        }
+
+table.draw();
+}
+
+
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+        var dLon = deg2rad(lon2 - lon1); 
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+        var d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+
+    
+
+
+    function createMap(data) {
+    const map = L.map('map').setView([53.4282798767, 14.5524597168], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    data.forEach(vehicle => {
+        L.marker([vehicle.latitude, vehicle.longitude])
+            .bindPopup(`<b>${vehicle.vehicle_number}</b><br>${vehicle.line_number}`) // użycie backticków
+            .addTo(map);
+    });
+}
+  
+    
+});
+  </script>
+  </html>
