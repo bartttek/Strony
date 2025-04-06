@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz z procentami</title>
+    <link rel="icon" href="../grafiki/dynamit_ikona.svg">
+<link rel="stylesheet" href="styl.css">
+</head>
+<body>
+    <header>
+        <h1>Dynamath</h1>
+        <div class="buttons">
+            <input type="button" value="Zaloguj sie"><input type="button" value="Zarejstruj sie">
+        </div>
+    </header>
+    <h1>Quizy</h1>
+        <div id="quizy">
+            <div id="porcenty">
+                <button id="procentownik" onclick="procentownik()">Procentownik</button>
+                <button id="start-btn" onclick="rozpocznijQuiz()" style="display: none;">Rozpocznij quiz</button>
+                <button id="PrzetrwanieProc" onclick="PrzetrwanieProc()" style="display: none;">Rozpocznij tryb przetrwania</button>
+                <div id="przetrwanieContainer" style="display:none;">
+                    <div id="progress-bar">
+                        <div id="progress"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="wzory_skroconego_mnozenia">
+                <button id="mnozonko" onclick="">Mnozonko</button>
+            </div>
+        </div>
+    <p id="fala">FALA: 1</p>
+    
+</div>
+    <div id="quiz-container" style="display:none;">
+        <div id="zadanie-container"></div>
+        <input type="number" id="odpowiedz" placeholder="Wpisz odpowiedź">
+        <p id="timer">
+            
+        </p>
+        <button onclick="sprawdzOdpowiedz()">Sprawdź odpowiedź</button>
+        <p id="feedback"></p>
+        <p id="wynik"></p>
+        <p id="wynikpunkty"></p>
+    </div>
+    <div id="end-container" style="display:none;">
+        <h2>Quiz zakończony!</h2>
+        <p id="final-result"></p>
+        <button onclick="powrotDoStronyStartowej()">Powróć na stronę początkową</button>
+    </div>
+    <script src="script.js"></script>

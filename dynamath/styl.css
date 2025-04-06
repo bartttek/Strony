@@ -1,0 +1,59 @@
+#progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #e0e0e0;
+    bottom: 0px;
+}
+#progress {
+    height: 100%;
+    background-color: #76c7c0;
+    width: 100%;
+}
+#progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #e0e0e0;
+    bottom: 0px;
+}
+#progress {
+    height: 100%;
+    background-color: #76c7c0;
+    width: 100%;
+}
+header{
+    width: 100%;
+    height: 50px;
+    background-color: rgb(140, 17, 17);
+    display: flex;  
+    align-items: center;  
+    padding: 10px;
+}
+input[type="button"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 2px solid #007BFF;   
+    background-color: #007BFF;    
+    color: white;                
+    border-radius: 20px;         
+    margin-left: 20px;            
+    transition: all 0.3s ease;    
+  }
+
+ 
+  input[type="button"]:hover {
+    background-color: #0056b3;    
+    border-color: #0056b3;        
+  }
+
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;    
+    flex-grow: 1;  
+    margin-right: 35px;               
+  }
+
+  #progressBar {
+    transition: width 0.01s ease-in-out; 
+}
