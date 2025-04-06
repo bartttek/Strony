@@ -1,0 +1,136 @@
+<html>
+<body style="background-color: #ddd">
+<div style="width:500px; height:400px; margin:0 auto ">
+<canvas width="500" height="400" id="canvas">
+</canvas>
+ 
+<script>
+
+function katToRad(kat){return kat*Math.PI/180; }
+/*
+1. losowy punkt startu
+2. losowy kierunek poruszania sie pilki na starcie
+3. kolory wylosowac na starcie lub pilka, paletka, plansza jest zdjeciem
+4. odbicie od paletki (x,y) od pilki (i,j) polecam IFa w granicach od do paletki
+5. zakonczyc gre, gdy pilka dotknie dolu, y>od sciany dolnej
+*/
+    var play;
+	var gameOver=false;
+	var kierunekPoziomo /*+1 w prawo, -1 w lewo*/, kierunekPionowo /* +1 w dol, -1 w gore*/; 
+	var i, j;// pozycja pilki
+	var x,y; //x i y myszki
+	var kati=1, katj=1;
+	var pileczkaR=Math.floor(Math.random()*255);
+	var pileczkaG=Math.floor(Math.random()*255);
+	var pileczkaB=Math.floor(Math.random()*255);
+	var rakietkaR=Math.floor(Math.random()*255);
+	var rakietkaG=Math.floor(Math.random()*255);
+	var rakietkaB=Math.floor(Math.random()*255);
+	function draw() {
+		if (gameOver) {
+        return; 
+    }
+		var canvas = document.getElementById('canvas');
+		 if (canvas.getContext) {
+			var c = canvas.getContext('2d');
+		
+		
+			c.fillStyle="rgb(255,255,255)";
+			c.fillRect(0,0,500, 450);//biale tlo
+			c.strokeRect(0,0,500, 400);//obramowanie
+			
+
+			c.fillStyle="rgb("+ rakietkaR  +", "+rakietkaG+","+rakietkaB+")";
+		    c.fillRect(punktx,punkty,szerokosc,wysokosc);
+
+			
+			//rysowanie paletki w miejscu myszki (x,y)
+			c.fillStyle="rgb("+ rakietkaR  +", "+rakietkaG+","+rakietkaB+")";
+			c.fillRect(x-50,370,100, 10);
+	  		
+			
+			//rysowanie pseudopiłeczki
+			c.beginPath();
+			c.arc(i,j,5,katToRad(0),katToRad(360),false); //rysowanie pilki w miejscu (i,j)
+			c.fillStyle="rgb("+ pileczkaR  +", "+pileczkaG+","+pileczkaB+")";
+			
+			//Zmiana kierunku piłki przy wykryciu kolizji
+			if (j<=5) kierunekPionowo=1, katj=Math.floor(Math.random()*2+1);
+			if (i>=495) kierunekPoziomo=-1, kati=Math.floor(Math.random()*2+1);
+			if (i<=5) kierunekPoziomo=1, kati=Math.floor(Math.random()*2+1);
+			if (j>=365 && j<=375 && i>=x-50 && i <=x+50) kierunekPionowo=-1, katj=Math.floor(Math.random()*2+1);
+
+			if (i-5==punktx+szerokosc && j>=punktx && j <=punkty+wysokosc)kierunekPoziomo=1;
+			if (j-5==punkty+wysokosc && i>=punktx && i <=punktx+szerokosc)kierunekPionowo=1;
+			if (j+5==punkty && i>=punktx && i <=punktx+szerokosc)kierunekPionowo=-1;
+			if (i+5==punktx && j>=punkty && j <=punkty+wysokosc)kierunekPoziomo=-1;
+			
+
+			if (j>=395){
+				clearInterval(play);
+					c.fillStyle="rgb(0, 0, 0)";
+					c.font = "italic bold 30px Arial";
+					c.fillText("Koniec", 200, 250);
+					gameOver = true;
+			};
+
+			if (kierunekPoziomo==1) i+=kati;//pilka leci w prawo, gdy ma kierunek =1
+			else i-=kati;//inaczej leci w lewo
+			if (kierunekPionowo==1) j+=katj;
+			else j-=katj;
+			
+			c.fill(); 
+			c.closePath();
+			
+			
+			
+		 }
+	}
+	 
+	function pong(){
+	
+		i=Math.floor(Math.random()*495+5);
+		j=0;
+		gameOver=false;
+		kierunekPionowo=1;
+		kierunekPoziomo=Math.floor(Math.random()*2);
+		punktx=Math.floor(Math.random()*400+10);
+		punkty=Math.floor(Math.random()*100+10);
+		szerokosc=Math.floor(Math.random()*100+20);
+		wysokosc=Math.floor(Math.random()*20+10);
+	    play = setInterval('draw()',10);
+		
+	}
+	
+ 	
+function pozycjaMyszki(e) {
+
+    if (!e) var e = window.event;
+    if (e.pageX || e.pageY) {
+         pozX = e.pageX;
+         pozY = e.pageY;
+    } else if (e.clientX || e.clientY) {
+         pozX = e.clientX + document.body.scrollLeft;
+         pozY = e.clientY + document.body.scrollTop;
+    }
+	pozX=pozX-((screen.width-500)/2);
+
+	x=pozX;
+	y=pozY;
+	
+    return {pozX,pozY}
+}
+	
+	
+ document.onmousemove = function(e){
+ pozycjaMyszki(e);
+}
+</script>
+<button onClick="pong()">Pong</button>
+<div id="text"></div>
+<div id="text2"></div>
+</div>
+
+
+</body>
+</html>

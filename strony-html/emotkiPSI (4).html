@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emotki</title>
+</head>
+<body>
+<style>
+#mainCanvas{
+margin-top: 500px;
+margin-left: 1000px
+}
+
+.panel_wyboru{
+		width: 220px;
+		height: 380px;
+		position: absolute;
+		top: 100px;
+		left: 0px;
+		transition: All 1s ease;
+		transform: translate(-200px);
+		background-color: black;
+		color: white;
+	}
+	.panel_wyboru:hover{
+		transform: translate(0px);
+	}
+
+</style>
+
+<canvas id="mainCanvas" width="400" height="400">
+  Twoja przeglądarka nie obsługuje elementów typu canvas.
+</canvas>
+
+<script>
+  var renderCanvas = document.getElementById("mainCanvas");
+  var renderCtx = renderCanvas.getContext('2d');
+  renderCtx.lineWidth=2;
+
+var wielUsmiech = 10;
+var cos = "nie";
+ var colorR = 200;
+ var colorG = 200;
+ var colorB = 200; 
+ var wielkosc = 50;
+ var oko = 10;
+ var Pozycja = 125;
+ 
+ renderCtx.fillStyle = "rgb("+ colorR  +", "+colorG+", "+colorB+")";
+  renderCtx.beginPath();
+  renderCtx.arc(100, 100, wielkosc, 0, 2 * Math.PI);
+  renderCtx.fill();
+
+  renderCtx.beginPath();
+  renderCtx.arc(80, 80, oko, 0, 2 * Math.PI);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  renderCtx.arc(120, 80, oko, 0, 2 * Math.PI);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  renderCtx.moveTo(100, 95);
+  renderCtx.lineTo(95, 105);
+  renderCtx.lineTo(105, 105);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  renderCtx.arc(100, 130, wielUsmiech, 0, Math.PI , true);
+  renderCtx.stroke();
+  
+  renderCtx.fillStyle = 'blue'
+   renderCtx.beginPath();
+   renderCtx.moveTo(Pozycja, 95);
+	renderCtx.lineTo(Pozycja+5, 103);
+	renderCtx.arc(Pozycja, 103, 5, 0, Math.PI , false);
+	renderCtx.closePath();
+	renderCtx.fill();
+	
+	renderCtx.beginPath();
+   renderCtx.moveTo(125, 110);
+	renderCtx.lineTo(130, 118);
+	renderCtx.arc(125, 118, 5, 0, Math.PI , false);
+	renderCtx.closePath();
+	renderCtx.fill();
+	
+function kolorTwarzy(){
+  colorR=document.getElementById("czerwony").value;
+	 colorG=document.getElementById("zielony").value;
+	 colorB=document.getElementById("niebieski").value;
+	
+}
+
+function wielkoscTwarzy(){
+
+wielkosc=document.getElementById("face").value;
+}
+
+function wielkoscOczu(){
+
+oko=document.getElementById("oko").value;
+}
+
+function PozycjaOka(){
+
+Pozycja=document.getElementById("gdzie").value;
+
+}
+
+function usmiech(){
+cos=document.getElementById("czy").value;
+}
+
+function wielkoscUsmiechu(){
+wielUsmiech=document.getElementById("Usmieszek").value;
+}
+
+function rysuj(){
+renderCtx.clearRect(0, 0, renderCanvas.width, renderCanvas.height);
+ 
+ renderCtx.fillStyle = "rgb("+ colorR  +", "+colorG+", "+colorB+")";
+  renderCtx.beginPath();
+  renderCtx.arc(100, 100, wielkosc, 0, 2 * Math.PI);
+  renderCtx.fill();
+
+  renderCtx.beginPath();
+  renderCtx.arc(80, 80, oko, 0, 2 * Math.PI);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  renderCtx.arc(120, 80, oko, 0, 2 * Math.PI);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  renderCtx.moveTo(100, 95);
+  renderCtx.lineTo(95, 105);
+  renderCtx.lineTo(105, 105);
+  renderCtx.stroke();
+
+  renderCtx.beginPath();
+  if(wielUsmiech>4 && wielUsmiech<21){
+  renderCtx.arc(100, 130, wielUsmiech, 0, Math.PI , true);
+  }else{
+  renderCtx.arc(100, 130, 10, 0, Math.PI , true);
+  }
+  if(cos === "tak"){
+  renderCtx.closePath();
+  }
+  renderCtx.stroke();
+  
+  renderCtx.fillStyle = 'blue'
+   renderCtx.beginPath();
+   renderCtx.moveTo(Pozycja, 95);
+	renderCtx.arc(Pozycja, 103, 5, 0, Math.PI , false);
+	renderCtx.closePath();
+	renderCtx.fill();
+	
+	renderCtx.beginPath();
+   renderCtx.moveTo(Pozycja, 110);
+	renderCtx.arc(Pozycja, 118, 5, 0, Math.PI , false);
+	renderCtx.closePath();
+	renderCtx.fill();
+	
+}
+ 
+
+	
+
+</script>
+
+<div class="panel_wyboru">
+        <h3>Panel edycyjny Emotki</h3>
+
+            Zedytuj emotke<br>
+             R: <input type="range" id="czerwony" min="0" max="255" oninput="kolorTwarzy()"><br>
+             G: <input type="range" id="zielony" min="0" max="255" oninput="kolorTwarzy()"><br>
+             B: <input type="range" id="niebieski" min="0" max="255" oninput="kolorTwarzy()"><br>
+			 
+			  <br>
+             wielkosc twarzy <input type="range" id="face" min="40" max="100" oninput="wielkoscTwarzy()"><br>
+           
+		   <br>
+             wielkosc oczu <input type="range" id="oko" min="5" max="15" oninput="wielkoscOczu()"><br>
+			 
+			 Pozycja łez
+			<select id="gdzie" onChange="PozycjaOka()">
+                <option value="125">prawe</option>
+                <option value="80">lewe</option>
+            </select>
+			<br>
+			
+			Usmiech
+			<select id="czy" onChange="usmiech()">
+			<option value="nie">rozlacz</option>
+                <option value="tak">polacz</option>
+            </select>
+			<br>
+			
+			wielkosc usmiechu<br><input type="number" id="Usmieszek" min="40" max="100" oninput="wielkoscUsmiechu()">(max-20 min-5)<br>
+		   
+		   <button onclick="rysuj()"> rysuj</button>
+    </div>
+</body>
+</html>

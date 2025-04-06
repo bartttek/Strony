@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Stronka</title>
+    <style>
+        body {
+             font-family: "Courier New", Courier, monospace;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .color_box {
+            width: 200px;
+            height: 200px;
+            border: 1px solid #333;
+            text-align: center;
+            box-sizing: border-box;
+            display: none;
+            margin-top: 20px;
+            padding-top: 80px;
+            font-size: 18px;
+            color: white;
+            background-color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>koloru swiatla otoczenia</h2>
+
+    <h3>kolor swiatla</h3>
+    <input type="color" name="kolOtocz" id="kolOtocz">
+    <h3>natezenie swiatla</h3>
+	(od 0% do 100%)<br>
+    <input type="number" name="natOtocz" id="natOtocz" min="0" max="100">
+    <br>
+    <h2>kolor zrodla swiatla</h2>
+    <h3>kolor swiatla</h3>
+    <input type="color" name="kolZr" id="kolZr">
+    <h3>natezenie swiatla</h3>
+	(od 0% do 100%)<br>
+    <input type="number" name="natZr" id="natZr" min="0" max="100">
+    <h3>Kąt swiatla</h3>
+	(od 0° do 90°)<br>
+    <input type="number" name="cos1" id="cos1" min="0" max="90"><br>
+    <br>
+    <h2>kolorek</h2>
+
+    <h3>kolor swiatla</h3>
+    <input type="color" name="kolOtocze" id="kolOtocze">
+    <h3>natezenie swiatla</h3>
+	(od 0% do 100%)<br>
+    <input type="number" name="natOtocze" id="natOtocze" min="0" max="100">
+    <h3>kat padania swiatla</h3>
+	(od 0° do 90°)<br>
+    <input type="number" name="cos2" id="cos2" min="0" max="90">
+    <h3>Potęga "n"</h3>
+	(od 1 do 5)<br>
+    <input type="number" name="potega" id="potega" min="0" max="5">
+    <br>
+    <button onclick="kolorek()" >Oblicz</button><br>
+
+    <div id="text"></div><br>
+    <div id="color_box" class="color_box">Kolor otrzymany</div>
+
+    <script>
+        function kolorek() {
+            var kolOtocz = document.getElementById("kolOtocz").value;
+            var natOtocz = document.getElementById("natOtocz").value;
+            var kolZr = document.getElementById("kolZr").value;
+            var natZr = document.getElementById("natZr").value;
+            var cos1 = document.getElementById("cos1").value;
+            var kolOtocze = document.getElementById("kolOtocze").value;
+            var natOtocze = document.getElementById("natOtocze").value;
+            var cos2 = document.getElementById("cos2").value;
+            var potega = document.getElementById("potega").value;
+
+            var R1, G1, B1;
+
+            R1 = parseInt(kolOtocz.substr(1, 2), 16);
+            G1 = parseInt(kolOtocz.substr(3, 2), 16);
+            B1 = parseInt(kolOtocz.substr(5, 2), 16);
+
+            natOtocz /= 100;
+            R1 *= natOtocz;
+            G1 *= natOtocz;
+            B1 *= natOtocz;
+
+            var R2, G2, B2;
+
+            R2 = parseInt(kolZr.substr(1, 2), 16);
+            G2 = parseInt(kolZr.substr(3, 2), 16);
+            B2 = parseInt(kolZr.substr(5, 2), 16);
+
+            natZr /= 100;
+            cos1 = (cos1 * Math.PI) / 180;
+            cos1 = Math.cos(cos1);
+
+            R2 *= natZr * cos1;
+            G2 *= natZr * cos1;
+            B2 *= natZr * cos1;
+
+            if (R2 > 255) {
+                R2 = 255;
+            }
+            if (G2 > 255) {
+                G2 = 255;
+            }
+            if (B2 > 255) {
+                B2 = 255;
+            }
+
+            var R3, G3, B3;
+
+            R3 = parseInt(kolOtocze.substr(1, 2), 16);
+            G3 = parseInt(kolOtocze.substr(3, 2), 16);
+            B3 = parseInt(kolOtocze.substr(5, 2), 16);
+
+            natOtocze /= 100;
+
+            cos2 = (cos2 * Math.PI) / 180;
+            cos2 = Math.pow(Math.cos(cos2), potega);
+
+            R3 *= natOtocze * cos2;
+            G3 *= natOtocze * cos2;
+            B3 *= natOtocze * cos2;
+
+            if (R3 > 255) {
+                R3 = 255;
+            }
+            if (G3 > 255) {
+                G3 = 255;
+            }
+            if (B3 > 255) {
+                B3 = 255;
+            }
+
+            var R, G, B;
+
+            R = Math.round(R1 + R2 + R3);
+            G = Math.round(G1 + G2 + G3);
+            B = Math.round(B1 + B2 + B3);
+
+            if (R > 255) {
+                R = 255;
+            }
+            if (G > 255) {
+                G = 255;
+            }
+            if (B > 255) {
+                B = 255;
+            }
+
+            var return_msg = "kolorek w rgb(" + R + "," + G + "," + B + ")";
+            var return_color = "rgb(" + R + "," + G + "," + B + ")";
+
+            document.getElementById("text").innerHTML = return_msg;
+            document.getElementById("color_box").style.backgroundColor = return_color;
+            document.getElementById("color_box").style.display = "block";
+        }
+    </script>
+</body>
+
+</html>
