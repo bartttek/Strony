@@ -1,0 +1,57 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input[type="date"],
+input[type="number"],
+input[type="text"],
+input[type="datetime-local"],
+input[type="time"] {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+  background-color: #45a049;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid black;
+}
+
+table th {
+  background-color: #4CAF50;
+  color: white;
+}
