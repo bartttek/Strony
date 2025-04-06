@@ -1,0 +1,62 @@
+
+    <!doctype html>
+    <html lang="pl">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
+        <style>
+        body{
+            background-color: #eee;
+        }
+        table{
+            background-color: white;
+        }
+        tbody > tr:nth-child(2n) > td{
+            background-color: #f3f3f3;
+        }
+        </style>
+    </head>
+    
+    <body>
+        <a href="Kebabik.html">Wpisz kebaba</a><br>
+    <table id="example" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Ocena</th>
+                <th>Miasto</th>
+            </tr>
+        </thead>
+        <tbody>           
+    </tbody>
+    </table>
+    
+    <script>
+        $(document).ready(function() {
+            
+
+            var table = $('#example').DataTable({
+                ajax: {
+                    url: "http://localhost/strona.php",
+                    data: { znajdz: 1 },
+                    dataType: "json",
+                    method: "GET",
+                    success: function(data) {
+                        console.log(data);
+
+                        table.clear(); 
+                    table.rows.add(data); 
+                    table.draw(); 
+                    }
+                },
+                columns: [
+                    { data: 'nazwa' },
+                    { data: 'ocena' },
+                    { data: 'miasto' }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

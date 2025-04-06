@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-image: url('kebabik.png');
+            background-size: cover; 
+            background-position: center;
+                font-family: Arial, sans-serif;
+            }
+            .main {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                width: 300px;
+                box-sizing: border-box;
+            }
+            input[type=text], input[type=range] {
+                width: 100%;
+                padding: 8px;
+                margin: 10px 0;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            button {
+                width: 100%;
+                padding: 10px;
+                background-color: #1da1f2;
+                border: none;
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 15px;
+            }
+            button:hover {
+                background-color: #0d95e8;
+            }
+            a {
+                color: #1da1f2;
+                text-decoration: none;
+                margin-bottom: 10px;
+                display: block;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+            #box{
+                margin-top: 50px;
+                line-height: 50px;
+            }
+        </style>
+        </head> 
+<body>
+    <div class="main">
+    <a href="Kebabik.html">Wpisz kebaba</a><br>
+    <a href="Wszystkiekebaby.html">Wszytskie Kebaby</a><br>
+<h2>Podaj miasto w ktorym znajduje sie kebab</h2> <input type="text" id="miasto"><br>
+<button id="wysli">wysli</button>
+<div id="box"></div>
+</div>
+</body>
+<script>
+    $("#wysli").click(function() {
+
+       
+        var miasto = $('#miasto').val();
+
+        $.ajax({ 						
+        url: "http://localhost/znajdz.php?miasto="+miasto, 
+		method : "post",
+        dataType : "text",
+        success : function(odpowiedz) {
+			$("#box").html("<b>Kebaby znalezione w " + miasto + ":</b><br>" + odpowiedz);
+        }
+    });
+    });
+    
+</script>
+</html>
